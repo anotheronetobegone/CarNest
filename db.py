@@ -8,6 +8,11 @@ load_dotenv(".env.development")
 
 DB_TYPE = os.getenv("DB_TYPE")
 
+def get_placeholder():
+    """
+    Returns the SQL placeholder based on the database type.
+    """
+    return "?" if DB_TYPE == "sqlite" else "%s"
 
 def get_connection():
     """
@@ -189,21 +194,36 @@ def add_vehicle(data):
     conn = get_connection()
     cursor = conn.cursor()
 
-    cursor.execute("""
-        INSERT INTO vehicles (
-            brand,
-            model,
-            year,
-            fuel_type,
-            transmission,
-            color,
-            mileage,
-            purchase_price,
-            selling_price,
-            status
-        )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    """, (
+    placeholder = get_placeholder()
+
+    query = f"""
+    INSERT INTO vehicles (
+        brand,
+        model,
+        year,
+        fuel_type,
+        transmission,
+        color,
+        mileage,
+        purchase_price,
+        selling_price,
+        status
+    )
+    VALUES (
+        {placeholder},
+        {placeholder},
+        {placeholder},
+        {placeholder},
+        {placeholder},
+        {placeholder},
+        {placeholder},
+        {placeholder},
+        {placeholder},
+        {placeholder}
+    )
+    """
+
+    cursor.execute(query, (
         data["brand"],
         data["model"],
         data["year"],
@@ -215,7 +235,7 @@ def add_vehicle(data):
         data["selling_price"],
         data["status"]
     ))
-
+    
     conn.commit()
 
     vehicle_id = cursor.lastrowid
