@@ -124,6 +124,41 @@ def create_tables():
     conn.commit()
     conn.close()
 
+def get_all_vehicles():
+    """
+    Returns all vehicles from the database.
+    """
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT * FROM vehicles
+    """)
+
+    rows = cursor.fetchall()
+
+    conn.close()
+
+    vehicles = []
+
+    for row in rows:
+        vehicles.append({
+            "vehicle_id": row[0],
+            "brand": row[1],
+            "model": row[2],
+            "year": row[3],
+            "fuel_type": row[4],
+            "transmission": row[5],
+            "color": row[6],
+            "mileage": row[7],
+            "purchase_price": row[8],
+            "selling_price": row[9],
+            "status": row[10]
+        })
+
+    return vehicles
+
 def add_vehicle(data):
     """
     Inserts a new vehicle into the database.

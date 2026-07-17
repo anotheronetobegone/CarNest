@@ -1,5 +1,5 @@
 from fastapi import FastAPI, HTTPException
-from db import create_tables, add_vehicle
+from db import create_tables, add_vehicle, get_all_vehicles
 
 app = FastAPI(
     title="CarNest API",
@@ -20,6 +20,25 @@ def home():
         "status": "running"
     }
 
+@app.get("/vehicles")
+def get_vehicles():
+
+    try:
+
+        vehicles = get_all_vehicles()
+
+        return {
+            "count": len(vehicles),
+            "vehicles": vehicles
+        }
+
+    except Exception as e:
+
+        raise HTTPException(
+            status_code=500,
+            detail=str(e)
+        )
+    
 @app.post("/vehicles")
 def create_vehicle(vehicle: dict):
 
