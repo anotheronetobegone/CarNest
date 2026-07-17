@@ -3,7 +3,6 @@ import sqlite3
 import mysql.connector
 from dotenv import load_dotenv
 
-# Load development environment
 load_dotenv(".env.development")
 
 DB_TYPE = os.getenv("DB_TYPE")
@@ -129,6 +128,8 @@ def create_tables():
     conn.commit()
     conn.close()
 
+# VEHICLE
+
 def vehicle_to_dict(row):
     return {
         "vehicle_id": row[0],
@@ -235,7 +236,7 @@ def add_vehicle(data):
         data["selling_price"],
         data["status"]
     ))
-    
+
     conn.commit()
 
     vehicle_id = cursor.lastrowid
@@ -300,6 +301,177 @@ def delete_vehicle(vehicle_id):
         DELETE FROM vehicles
         WHERE vehicle_id = ?
     """, (vehicle_id,))
+
+    conn.commit()
+
+    deleted = cursor.rowcount
+
+    conn.close()
+
+    return deleted
+
+# INSPECTION
+
+def add_inspection(data):
+    """
+    Adds a vehicle inspection.
+    """
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    placeholder = get_placeholder()
+
+    query = f"""
+    INSERT INTO inspections(
+        vehicle_id,
+        inspection_date,
+        condition,
+        remarks,
+        status
+    )
+    VALUES (
+        {placeholder},
+        {placeholder},
+        {placeholder},
+        {placeholder},
+        {placeholder}
+    )
+    """
+
+    cursor.execute(query, (
+        data["vehicle_id"],
+        data["inspection_date"],
+        data["condition"],
+        data["remarks"],
+        data["status"]
+    ))
+
+    conn.commit()
+
+    inspection_id = cursor.lastrowid
+
+    conn.close()
+
+    return inspection_id
+
+def get_all_inspections():
+    """
+    Returns all inspections.
+    """
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT * FROM inspections
+    """)
+
+    rows = cursor.fetchall()
+
+    conn.close()
+
+    inspections = []
+
+    for row in rows:
+        inspections.append({
+            "inspection_id": row[0],
+            "vehicle_id": row[1],
+            "inspection_date": row[2],
+            "condition": row[3],
+            "remarks": row[4],
+            "status": row[5]
+        })
+
+    return inspections
+
+def get_inspection_by_id(inspection_id):
+    """
+    Returns an inspection by ID.
+    """
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    placeholder = get_placeholder()
+
+    query = f"""
+        SELECT * FROM inspections
+        WHERE inspection_id = {placeholder}
+    """
+
+    cursor.execute(query, (inspection_id,))
+
+    row = cursor.fetchone()
+
+    conn.close()
+
+    if row is None:
+        return None
+
+    return {
+        "inspection_id": row[0],
+        "vehicle_id": row[1],
+        "inspection_date": row[2],
+        "condition": row[3],
+        "remarks": row[4],
+        "status": row[5]
+    }
+
+def update_inspection(inspection_id, data):
+    """
+    Updates an inspection.
+    """
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    placeholder = get_placeholder()
+
+    query = f"""
+        UPDATE inspections
+        SET
+            vehicle_id={placeholder},
+            inspection_date={placeholder},
+            condition={placeholder},
+            remarks={placeholder},
+            status={placeholder}
+        WHERE inspection_id={placeholder}
+    """
+
+    cursor.execute(query, (
+        data["vehicle_id"],
+        data["inspection_date"],
+        data["condition"],
+        data["remarks"],
+        data["status"],
+        inspection_id
+    ))
+
+    conn.commit()
+
+    updated = cursor.rowcount
+
+    conn.close()
+
+    return updated
+
+def delete_inspection(inspection_id):
+    """
+    Deletes an inspection.
+    """
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    placeholder = get_placeholder()
+
+    query = f"""
+        DELETE FROM inspections
+        WHERE inspection_id={placeholder}
+    """
+
+    cursor.execute(query, (inspection_id,))
 
     conn.commit()
 

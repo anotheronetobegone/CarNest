@@ -1,11 +1,19 @@
 from fastapi import FastAPI, HTTPException
 from db import (
+    # VEHICLES
     create_tables,
     add_vehicle,
     get_all_vehicles,
     get_vehicle_by_id,
     update_vehicle,
-    delete_vehicle
+    delete_vehicle,
+
+    # INSPECTION
+    add_inspection,
+    get_all_inspections,
+    get_inspection_by_id,
+    update_inspection,
+    delete_inspection
 )
 
 app = FastAPI(
@@ -27,6 +35,7 @@ def home():
         "status": "running"
     }
 
+# VEHICLES
 @app.get("/vehicles")
 def get_vehicles():
 
@@ -104,4 +113,77 @@ def remove_vehicle(vehicle_id: int):
 
     return {
         "message": "Vehicle deleted successfully"
+    }
+
+# INSPECTION
+@app.post("/inspections")
+def create_inspection(inspection: dict):
+
+    try:
+
+        inspection_id = add_inspection(inspection)
+
+        return {
+            "message": "Inspection added successfully",
+            "inspection_id": inspection_id
+        }
+
+    except Exception as e:
+
+        raise HTTPException(
+            status_code=500,
+            detail=str(e)
+        )
+    
+@app.get("/inspections")
+def get_inspections():
+
+    inspections = get_all_inspections()
+
+    return {
+        "count": len(inspections),
+        "inspections": inspections
+    }
+
+@app.get("/inspections/{inspection_id}")
+def get_inspection(inspection_id: int):
+
+    inspection = get_inspection_by_id(inspection_id)
+
+    if inspection is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Inspection not found"
+        )
+
+    return inspection
+
+@app.put("/inspections/{inspection_id}")
+def edit_inspection(inspection_id: int, inspection: dict):
+
+    updated = update_inspection(inspection_id, inspection)
+
+    if updated == 0:
+        raise HTTPException(
+            status_code=404,
+            detail="Inspection not found"
+        )
+
+    return {
+        "message": "Inspection updated successfully"
+    }
+
+@app.delete("/inspections/{inspection_id}")
+def remove_inspection(inspection_id: int):
+
+    deleted = delete_inspection(inspection_id)
+
+    if deleted == 0:
+        raise HTTPException(
+            status_code=404,
+            detail="Inspection not found"
+        )
+
+    return {
+        "message": "Inspection deleted successfully"
     }
