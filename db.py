@@ -130,6 +130,57 @@ def create_tables():
 
 # VEHICLE
 
+def vehicle_exists(vehicle_id):
+    """
+    Checks if a vehicle exists.
+    """
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    placeholder = get_placeholder()
+
+    query = f"""
+        SELECT COUNT(*)
+        FROM vehicles
+        WHERE vehicle_id = {placeholder}
+    """
+
+    cursor.execute(query, (vehicle_id,))
+
+    count = cursor.fetchone()[0]
+
+    conn.close()
+
+    return count > 0
+
+def get_vehicle_status(vehicle_id):
+    """
+    Returns the current status of a vehicle.
+    """
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    placeholder = get_placeholder()
+
+    query = f"""
+        SELECT status
+        FROM vehicles
+        WHERE vehicle_id = {placeholder}
+    """
+
+    cursor.execute(query, (vehicle_id,))
+
+    row = cursor.fetchone()
+
+    conn.close()
+
+    if row is None:
+        return None
+
+    return row[0]
+
 def vehicle_to_dict(row):
     return {
         "vehicle_id": row[0],
@@ -480,3 +531,59 @@ def delete_inspection(inspection_id):
     conn.close()
 
     return deleted
+
+# HELPER FUNCTIONS
+
+def calculate_profit(vehicle_id, selling_price):
+    """
+    Calculates the profit made on a vehicle sale.
+    """
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    placeholder = get_placeholder()
+
+    query = f"""
+        SELECT purchase_price
+        FROM vehicles
+        WHERE vehicle_id = {placeholder}
+    """
+
+    cursor.execute(query, (vehicle_id,))
+
+    row = cursor.fetchone()
+
+    conn.close()
+
+    if row is None:
+        return None
+
+    purchase_price = row[0]
+
+    return selling_price - purchase_price
+
+def mark_vehicle_as_sold(vehicle_id):
+    """
+    Updates vehicle status to Sold.
+    """
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    placeholder = get_placeholder()
+
+    query = f"""
+        UPDATE vehicles
+        SET status = {placeholder}
+        WHERE vehicle_id = {placeholder}
+    """
+
+    cursor.execute(query, (
+        "Sold",
+        vehicle_id
+    ))
+
+    conn.commit()
+
+    conn.close()
