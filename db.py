@@ -123,3 +123,46 @@ def create_tables():
 
     conn.commit()
     conn.close()
+
+def add_vehicle(data):
+    """
+    Inserts a new vehicle into the database.
+    """
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        INSERT INTO vehicles (
+            brand,
+            model,
+            year,
+            fuel_type,
+            transmission,
+            color,
+            mileage,
+            purchase_price,
+            selling_price,
+            status
+        )
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    """, (
+        data["brand"],
+        data["model"],
+        data["year"],
+        data["fuel_type"],
+        data["transmission"],
+        data["color"],
+        data["mileage"],
+        data["purchase_price"],
+        data["selling_price"],
+        data["status"]
+    ))
+
+    conn.commit()
+
+    vehicle_id = cursor.lastrowid
+
+    conn.close()
+
+    return vehicle_id
