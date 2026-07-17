@@ -124,6 +124,21 @@ def create_tables():
     conn.commit()
     conn.close()
 
+def vehicle_to_dict(row):
+    return {
+        "vehicle_id": row[0],
+        "brand": row[1],
+        "model": row[2],
+        "year": row[3],
+        "fuel_type": row[4],
+        "transmission": row[5],
+        "color": row[6],
+        "mileage": row[7],
+        "purchase_price": row[8],
+        "selling_price": row[9],
+        "status": row[10]
+    }
+
 def get_all_vehicles():
     """
     Returns all vehicles from the database.
@@ -140,22 +155,7 @@ def get_all_vehicles():
 
     conn.close()
 
-    vehicles = []
-
-    for row in rows:
-        vehicles.append({
-            "vehicle_id": row[0],
-            "brand": row[1],
-            "model": row[2],
-            "year": row[3],
-            "fuel_type": row[4],
-            "transmission": row[5],
-            "color": row[6],
-            "mileage": row[7],
-            "purchase_price": row[8],
-            "selling_price": row[9],
-            "status": row[10]
-        })
+    vehicles = [vehicle_to_dict(row) for row in rows]
 
     return vehicles
 
@@ -179,19 +179,7 @@ def get_vehicle_by_id(vehicle_id):
     if row is None:
         return None
 
-    return {
-        "vehicle_id": row[0],
-        "brand": row[1],
-        "model": row[2],
-        "year": row[3],
-        "fuel_type": row[4],
-        "transmission": row[5],
-        "color": row[6],
-        "mileage": row[7],
-        "purchase_price": row[8],
-        "selling_price": row[9],
-        "status": row[10]
-    }
+    return vehicle_to_dict(row)
 
 def add_vehicle(data):
     """
