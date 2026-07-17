@@ -5,6 +5,7 @@ from db import (
     get_all_vehicles,
     get_vehicle_by_id,
     update_vehicle,
+    delete_vehicle
 )
 
 app = FastAPI(
@@ -88,4 +89,19 @@ def edit_vehicle(vehicle_id: int, vehicle: dict):
 
     return {
         "message": "Vehicle updated successfully"
+    }
+
+@app.delete("/vehicles/{vehicle_id}")
+def remove_vehicle(vehicle_id: int):
+
+    deleted = delete_vehicle(vehicle_id)
+
+    if deleted == 0:
+        raise HTTPException(
+            status_code=404,
+            detail="Vehicle not found"
+        )
+
+    return {
+        "message": "Vehicle deleted successfully"
     }

@@ -267,3 +267,24 @@ def update_vehicle(vehicle_id, data):
     conn.close()
 
     return updated
+
+def delete_vehicle(vehicle_id):
+    """
+    Deletes a vehicle.
+    """
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        DELETE FROM vehicles
+        WHERE vehicle_id = ?
+    """, (vehicle_id,))
+
+    conn.commit()
+
+    deleted = cursor.rowcount
+
+    conn.close()
+
+    return deleted
