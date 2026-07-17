@@ -159,6 +159,40 @@ def get_all_vehicles():
 
     return vehicles
 
+def get_vehicle_by_id(vehicle_id):
+    """
+    Returns a single vehicle by its ID.
+    """
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT * FROM vehicles
+        WHERE vehicle_id = ?
+    """, (vehicle_id,))
+
+    row = cursor.fetchone()
+
+    conn.close()
+
+    if row is None:
+        return None
+
+    return {
+        "vehicle_id": row[0],
+        "brand": row[1],
+        "model": row[2],
+        "year": row[3],
+        "fuel_type": row[4],
+        "transmission": row[5],
+        "color": row[6],
+        "mileage": row[7],
+        "purchase_price": row[8],
+        "selling_price": row[9],
+        "status": row[10]
+    }
+
 def add_vehicle(data):
     """
     Inserts a new vehicle into the database.
