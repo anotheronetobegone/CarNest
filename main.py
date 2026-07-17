@@ -3,7 +3,8 @@ from db import (
     create_tables,
     add_vehicle,
     get_all_vehicles,
-    get_vehicle_by_id
+    get_vehicle_by_id,
+    update_vehicle,
 )
 
 app = FastAPI(
@@ -73,3 +74,18 @@ def create_vehicle(vehicle: dict):
             status_code=500,
             detail=str(e)
         )
+    
+@app.put("/vehicles/{vehicle_id}")
+def edit_vehicle(vehicle_id: int, vehicle: dict):
+
+    updated = update_vehicle(vehicle_id, vehicle)
+
+    if updated == 0:
+        raise HTTPException(
+            status_code=404,
+            detail="Vehicle not found"
+        )
+
+    return {
+        "message": "Vehicle updated successfully"
+    }

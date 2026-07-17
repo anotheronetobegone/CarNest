@@ -223,3 +223,47 @@ def add_vehicle(data):
     conn.close()
 
     return vehicle_id
+
+def update_vehicle(vehicle_id, data):
+    """
+    Updates an existing vehicle.
+    """
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        UPDATE vehicles
+        SET
+            brand = ?,
+            model = ?,
+            year = ?,
+            fuel_type = ?,
+            transmission = ?,
+            color = ?,
+            mileage = ?,
+            purchase_price = ?,
+            selling_price = ?,
+            status = ?
+        WHERE vehicle_id = ?
+    """, (
+        data["brand"],
+        data["model"],
+        data["year"],
+        data["fuel_type"],
+        data["transmission"],
+        data["color"],
+        data["mileage"],
+        data["purchase_price"],
+        data["selling_price"],
+        data["status"],
+        vehicle_id
+    ))
+
+    conn.commit()
+
+    updated = cursor.rowcount
+
+    conn.close()
+
+    return updated
