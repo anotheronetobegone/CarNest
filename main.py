@@ -13,7 +13,14 @@ from db import (
     get_all_inspections,
     get_inspection_by_id,
     update_inspection,
-    delete_inspection
+    delete_inspection,
+
+    # SALES
+    add_sale,
+    get_all_sales,
+    get_sale_by_id,
+    update_sale,
+    delete_sale
 )
 
 app = FastAPI(
@@ -186,4 +193,76 @@ def remove_inspection(inspection_id: int):
 
     return {
         "message": "Inspection deleted successfully"
+    }
+
+# SALES
+
+@app.post("/sales")
+def create_sale(sale: dict):
+
+    result = add_sale(sale)
+
+    if not result["success"]:
+        raise HTTPException(
+            status_code=400,
+            detail=result["message"]
+        )
+
+    return {
+        "message": "Sale recorded successfully.",
+        "sale_id": result["sale_id"],
+        "profit": result["profit"]
+    }
+
+@app.get("/sales")
+def get_sales():
+
+    sales = get_all_sales()
+
+    return {
+        "count": len(sales),
+        "sales": sales
+    }
+
+@app.get("/sales/{sale_id}")
+def get_sale(sale_id: int):
+
+    sale = get_sale_by_id(sale_id)
+
+    if sale is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Sale not found"
+        )
+
+    return sale
+
+@app.put("/sales/{sale_id}")
+def edit_sale(sale_id: int, sale: dict):
+
+    updated = update_sale(sale_id, sale)
+
+    if updated == 0:
+        raise HTTPException(
+            status_code=404,
+            detail="Sale not found"
+        )
+
+    return {
+        "message": "Sale updated successfully"
+    }
+
+@app.delete("/sales/{sale_id}")
+def remove_sale(sale_id: int):
+
+    deleted = delete_sale(sale_id)
+
+    if deleted == 0:
+        raise HTTPException(
+            status_code=404,
+            detail="Sale not found"
+        )
+
+    return {
+        "message": "Sale deleted successfully"
     }

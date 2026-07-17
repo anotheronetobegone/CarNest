@@ -587,3 +587,245 @@ def mark_vehicle_as_sold(vehicle_id):
     conn.commit()
 
     conn.close()
+
+
+def mark_vehicle_as_available(vehicle_id):
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    placeholder = get_placeholder()
+
+    query = f"""
+        UPDATE vehicles
+        SET status={placeholder}
+        WHERE vehicle_id={placeholder}
+    """
+
+    cursor.execute(query, (
+        "Available",
+        vehicle_id
+    ))
+
+    conn.commit()
+    conn.close()
+
+# SALES
+
+def add_sale(data):
+    """
+    Creates a new vehicle sale.
+    """
+
+    vehicle_id = data["vehicle_id"]
+
+    # Check if vehicle exists
+    if not vehicle_exists(vehicle_id):
+        return {
+            "success": False,
+            "message": "Vehicle does not exist."
+        }
+
+    # Check vehicle status
+    status = get_vehicle_status(vehicle_id)
+
+    if status != "Available":
+        return {
+            "success": False,
+            "message": "Vehicle is not available for sale."
+        }
+
+    # Calculate profit
+    profit = calculate_profit(
+        vehicle_id,
+        data["final_price"]
+    )
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    placeholder = get_placeholder()
+
+    query = f"""
+        INSERT INTO sales (
+            vehicle_id,
+            buyer_name,
+            sale_date,
+            final_price,
+            profit
+        )
+        VALUES (
+            {placeholder},
+            {placeholder},
+            {placeholder},
+            {placeholder},
+            {placeholder}
+        )
+    """
+
+    cursor.execute(query, (
+        vehicle_id,
+        data["buyer_name"],
+        data["sale_date"],
+        data["final_price"],
+        profit
+    ))
+
+    conn.commit()
+
+    sale_id = cursor.lastrowid
+
+    conn.close()
+
+    # Update vehicle status
+    mark_vehicle_as_sold(vehicle_id)
+
+    return {
+        "success": True,
+        "sale_id": sale_id,
+        "profit": profit
+    }
+
+def get_all_sales():
+    """
+    Returns all sales.
+    """
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT * FROM sales
+    """)
+
+    rows = cursor.fetchall()
+
+    conn.close()
+
+    sales = []
+
+    for row in rows:
+        sales.append({
+            "sale_id": row[0],
+            "vehicle_id": row[1],
+            "buyer_name": row[2],
+            "sale_date": row[3],
+            "final_price": row[4],
+            "profit": row[5]
+        })
+
+    return sales
+
+def get_sale_by_id(sale_id):
+    """
+    Returns a sale by ID.
+    """
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    placeholder = get_placeholder()
+
+    query = f"""
+        SELECT * FROM sales
+        WHERE sale_id = {placeholder}
+    """
+
+    cursor.execute(query, (sale_id,))
+
+    row = cursor.fetchone()
+
+    conn.close()
+
+    if row is None:
+        return None
+
+    return {
+        "sale_id": row[0],
+        "vehicle_id": row[1],
+        "buyer_name": row[2],
+        "sale_date": row[3],
+        "final_price": row[4],
+        "profit": row[5]
+    }
+
+def update_sale(sale_id, data):
+    """
+    Updates a sale.
+    """
+
+    profit = calculate_profit(
+        data["vehicle_id"],
+        data["final_price"]
+    )
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    placeholder = get_placeholder()
+
+    query = f"""
+        UPDATE sales
+        SET
+            buyer_name={placeholder},
+            sale_date={placeholder},
+            final_price={placeholder},
+            profit={placeholder}
+        WHERE sale_id={placeholder}
+    """
+
+    cursor.execute(query, (
+        data["buyer_name"],
+        data["sale_date"],
+        data["final_price"],
+        profit,
+        sale_id
+    ))
+
+    conn.commit()
+
+    updated = cursor.rowcount
+
+    conn.close()
+
+    return updated
+
+def delete_sale(sale_id):
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    placeholder = get_placeholder()
+
+    query = f"""
+        SELECT vehicle_id
+        FROM sales
+        WHERE sale_id={placeholder}
+    """
+
+    cursor.execute(query, (sale_id,))
+    row = cursor.fetchone()
+
+    if row is None:
+        conn.close()
+        return 0
+
+    vehicle_id = row[0]
+
+    query = f"""
+        DELETE FROM sales
+        WHERE sale_id={placeholder}
+    """
+
+    cursor.execute(query, (sale_id,))
+
+    conn.commit()
+
+    deleted = cursor.rowcount
+
+    conn.close()
+
+    if deleted:
+        mark_vehicle_as_available(vehicle_id)
+
+    return deleted
