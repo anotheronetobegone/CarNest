@@ -19,4 +19,16 @@ export const updateVehicle = (id, vehicle) =>
 export const deleteVehicle = (id) =>
     api.delete(`/vehicles/${id}`);
 
+export const getInspections = () =>
+    api.get("/inspections");
+
+export const createInspection = (inspection) =>
+    api.post("/inspections", inspection);
+
+export const updateInspection = (id, inspection) =>
+    api.put(`/inspections/${id}`, inspection);
+
+export const deleteInspection = (id) =>
+    api.delete(`/inspections/${id}`);
+
 export default api;
