@@ -23,6 +23,8 @@ from db import (
     delete_sale
 )
 
+from analytics import dashboard_summary
+
 app = FastAPI(
     title="CarNest API",
     description="Used Car Inventory Management & Sales Analytics API",
@@ -266,3 +268,8 @@ def remove_sale(sale_id: int):
     return {
         "message": "Sale deleted successfully"
     }
+
+@app.get("/analytics/dashboard")
+def analytics_dashboard():
+
+    return dashboard_summary()
