@@ -415,7 +415,19 @@ def get_all_inspections():
     cursor = conn.cursor()
 
     cursor.execute("""
-        SELECT * FROM inspections
+        SELECT
+            i.inspection_id,
+            i.vehicle_id,
+            CONCAT(v.brand, ' ', v.model) AS vehicle_name,
+            i.inspection_date,
+            i.condition,
+            i.remarks,
+            i.status
+
+        FROM inspections i
+
+        JOIN vehicles v
+        ON i.vehicle_id = v.vehicle_id
     """)
 
     rows = cursor.fetchall()
@@ -428,10 +440,11 @@ def get_all_inspections():
         inspections.append({
             "inspection_id": row[0],
             "vehicle_id": row[1],
-            "inspection_date": row[2],
-            "condition": row[3],
-            "remarks": row[4],
-            "status": row[5]
+            "vehicle_name": row[2],
+            "inspection_date": row[3],
+            "condition": row[4],
+            "remarks": row[5],
+            "status": row[6]
         })
 
     return inspections
@@ -447,8 +460,18 @@ def get_inspection_by_id(inspection_id):
     placeholder = get_placeholder()
 
     query = f"""
-        SELECT * FROM inspections
-        WHERE inspection_id = {placeholder}
+        SELECT
+            i.inspection_id,
+            i.vehicle_id,
+            CONCAT(v.brand, ' ', v.model) AS vehicle_name,
+            i.inspection_date,
+            i.condition,
+            i.remarks,
+            i.status
+        FROM inspections i
+        JOIN vehicles v
+            ON i.vehicle_id = v.vehicle_id
+        WHERE i.inspection_id = {placeholder}
     """
 
     cursor.execute(query, (inspection_id,))
@@ -463,10 +486,11 @@ def get_inspection_by_id(inspection_id):
     return {
         "inspection_id": row[0],
         "vehicle_id": row[1],
-        "inspection_date": row[2],
-        "condition": row[3],
-        "remarks": row[4],
-        "status": row[5]
+        "vehicle_name": row[2],
+        "inspection_date": row[3],
+        "condition": row[4],
+        "remarks": row[5],
+        "status": row[6]
     }
 
 def update_inspection(inspection_id, data):

@@ -2,8 +2,9 @@ import VehicleTable from "../components/Vehicles/VehicleTable";
 import useVehicles from "../hooks/useVehicles";
 import { useState } from "react";
 import AddVehicleModal from "../components/Vehicles/AddVehicleModal";
-import { createVehicle, updateVehicle } from "../services/api";
+import { createVehicle, deleteVehicle, updateVehicle } from "../services/api";
 import EditVehicleModal from "../components/Vehicles/EditVehicleModal";
+import DeleteConfirmModal from "../components/Vehicles/DeleteConfirmModal";
 
 
 function Vehicles() {
