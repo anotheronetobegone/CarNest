@@ -38,3 +38,81 @@ def dashboard_summary():
     }
 
     return summary
+
+def brand_sales():
+
+    vehicles, inspections, sales = load_data()
+
+    if vehicles.empty or sales.empty:
+        return []
+
+    merged = sales.merge(
+        vehicles,
+        on="vehicle_id"
+    )
+
+    result = (
+        merged
+        .groupby("brand")
+        .agg(
+            vehicles_sold=("sale_id", "count"),
+            total_revenue=("final_price", "sum"),
+            total_profit=("profit", "sum")
+        )
+        .reset_index()
+    )
+
+    return result.to_dict(orient="records")
+
+def inventory_summary():
+
+    vehicles, _, _ = load_data()
+
+    if vehicles.empty:
+        return {}
+
+    inventory = (
+        vehicles["status"]
+        .value_counts()
+        .to_dict()
+    )
+
+    return inventory
+
+def inspection_summary():
+
+    _, inspections, _ = load_data()
+
+    if inspections.empty:
+        return {}
+
+    return (
+        inspections["status"]
+        .value_counts()
+        .to_dict()
+    )
+
+def monthly_sales():
+
+    _, _, sales = load_data()
+
+    if sales.empty:
+        return []
+
+    sales["sale_date"] = pd.to_datetime(
+        sales["sale_date"]
+    )
+
+    sales["month"] = sales["sale_date"].dt.strftime("%Y-%m")
+
+    result = (
+        sales.groupby("month")
+        .agg(
+            sales=("sale_id", "count"),
+            revenue=("final_price", "sum"),
+            profit=("profit", "sum")
+        )
+        .reset_index()
+    )
+
+    return result.to_dict(orient="records")

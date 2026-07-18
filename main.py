@@ -23,7 +23,13 @@ from db import (
     delete_sale
 )
 
-from analytics import dashboard_summary
+from analytics import (
+    dashboard_summary,
+    brand_sales,
+    inventory_summary,
+    inspection_summary,
+    monthly_sales
+)
 
 app = FastAPI(
     title="CarNest API",
@@ -273,3 +279,23 @@ def remove_sale(sale_id: int):
 def analytics_dashboard():
 
     return dashboard_summary()
+
+@app.get("/analytics/brand-sales")
+def analytics_brand_sales():
+
+    return brand_sales()
+
+@app.get("/analytics/inventory")
+def analytics_inventory():
+
+    return inventory_summary()
+
+@app.get("/analytics/inspection-summary")
+def analytics_inspections():
+
+    return inspection_summary()
+
+@app.get("/analytics/monthly-sales")
+def analytics_monthly_sales():
+
+    return monthly_sales()
