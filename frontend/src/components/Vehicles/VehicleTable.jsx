@@ -1,6 +1,6 @@
 import VehicleRow from "./VehicleRow";
 
-function VehicleTable({ vehicles }) {
+function VehicleTable({ vehicles, onEdit, onDelete }) {
     return (
         <table className="w-full bg-white shadow rounded">
             <thead className="bg-gray-100">
@@ -18,6 +18,8 @@ function VehicleTable({ vehicles }) {
                     <VehicleRow
                         key={vehicle.vehicle_id}
                         vehicle={vehicle}
+                        onEdit={onEdit}
+                        onDelete={onDelete}
                     />
                 ))}
             </tbody>

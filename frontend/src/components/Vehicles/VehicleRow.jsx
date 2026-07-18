@@ -1,4 +1,4 @@
-function VehicleRow({ vehicle }) {
+function VehicleRow({ vehicle, onEdit, onDelete }) {
     return (
         <tr className="border-b">
             <td className="p-3">{vehicle.brand}</td>
@@ -7,10 +7,16 @@ function VehicleRow({ vehicle }) {
             <td className="p-3">{vehicle.mileage}</td>
             <td className="p-3">{vehicle.status}</td>
             <td className="p-3 space-x-2">
-                <button className="text-blue-600">
+                <button
+                    className="text-blue-600"
+                    onClick={() => onEdit(vehicle)}
+                >
                     Edit
                 </button>
-                <button className="text-red-600">
+                <button
+                    className="text-red-600"
+                    onClick={() => onDelete(vehicle)}
+                >
                     Delete
                 </button>
             </td>
