@@ -10,4 +10,13 @@ export const getDashboard = () =>
 export const getVehicles = () =>
     api.get("/vehicles");
 
+export const createVehicle = (vehicle) =>
+    api.post("/vehicles", vehicle);
+
+export const updateVehicle = (id, vehicle) =>
+    api.put(`/vehicles/${id}`, vehicle);
+
+export const deleteVehicle = (id) =>
+    api.delete(`/vehicles/${id}`);
+
 export default api;
