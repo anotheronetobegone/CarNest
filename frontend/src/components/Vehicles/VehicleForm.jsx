@@ -27,7 +27,7 @@ function VehicleForm({ initialData = {}, onSubmit, onCancel }) {
     }
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-2">
             <input
                 className="w-full border rounded p-2"
                 name="brand"
