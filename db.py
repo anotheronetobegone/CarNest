@@ -634,6 +634,48 @@ def mark_vehicle_as_available(vehicle_id):
     conn.commit()
     conn.close()
 
+def get_sale_eligible_vehicles():
+    """
+    Returns vehicles that can be sold.
+    """
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    query = """
+        SELECT DISTINCT
+            v.vehicle_id,
+            v.brand,
+            v.model,
+            v.purchase_price
+        FROM vehicles v
+        JOIN inspections i
+            ON v.vehicle_id = i.vehicle_id
+        WHERE
+            v.status='Available'
+            AND i.status='Passed'
+        ORDER BY
+            v.brand,
+            v.model
+    """
+
+    cursor.execute(query)
+    rows = cursor.fetchall()
+    conn.close()
+
+    vehicles = []
+
+    for row in rows:
+
+        vehicles.append({
+            "vehicle_id": row[0],
+            "brand": row[1],
+            "model": row[2],
+            "purchase_price": row[3]
+        })
+
+    return vehicles
+
 # SALES
 
 def add_sale(data):
@@ -717,13 +759,25 @@ def get_all_sales():
 
     conn = get_connection()
     cursor = conn.cursor()
+    placeholder = get_placeholder()
 
-    cursor.execute("""
-        SELECT * FROM sales
-    """)
+    query = f"""
+        SELECT
+            s.sale_id,
+            s.vehicle_id,
+            CONCAT(v.brand, ' ', v.model) AS vehicle_name,
+            s.buyer_name,
+            s.sale_date,
+            s.final_price,
+            s.profit
+        FROM sales s
+        JOIN vehicles v
+            ON s.vehicle_id = v.vehicle_id
+        ORDER BY s.sale_date DESC
+    """
 
+    cursor.execute(query)
     rows = cursor.fetchall()
-
     conn.close()
 
     sales = []
@@ -732,12 +786,12 @@ def get_all_sales():
         sales.append({
             "sale_id": row[0],
             "vehicle_id": row[1],
-            "buyer_name": row[2],
-            "sale_date": row[3],
-            "final_price": row[4],
-            "profit": row[5]
+            "vehicle_name": row[2],
+            "buyer_name": row[3],
+            "sale_date": row[4],
+            "final_price": row[5],
+            "profit": row[6]
         })
-
     return sales
 
 def get_sale_by_id(sale_id):
@@ -747,18 +801,26 @@ def get_sale_by_id(sale_id):
 
     conn = get_connection()
     cursor = conn.cursor()
-
     placeholder = get_placeholder()
 
     query = f"""
-        SELECT * FROM sales
-        WHERE sale_id = {placeholder}
+        SELECT
+            s.sale_id,
+            s.vehicle_id,
+            CONCAT(v.brand, ' ', v.model) AS vehicle_name,
+            s.buyer_name,
+            s.sale_date,
+            s.final_price,
+            s.profit
+        FROM sales s
+        JOIN vehicles v
+            ON s.vehicle_id = v.vehicle_id
+        WHERE s.sale_id = {placeholder}
     """
 
     cursor.execute(query, (sale_id,))
 
     row = cursor.fetchone()
-
     conn.close()
 
     if row is None:
@@ -767,10 +829,11 @@ def get_sale_by_id(sale_id):
     return {
         "sale_id": row[0],
         "vehicle_id": row[1],
-        "buyer_name": row[2],
-        "sale_date": row[3],
-        "final_price": row[4],
-        "profit": row[5]
+        "vehicle_name": row[2],
+        "buyer_name": row[3],
+        "sale_date": row[4],
+        "final_price": row[5],
+        "profit": row[6]
     }
 
 def update_sale(sale_id, data):

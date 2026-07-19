@@ -20,7 +20,8 @@ from db import (
     get_all_sales,
     get_sale_by_id,
     update_sale,
-    delete_sale
+    delete_sale,
+    get_sale_eligible_vehicles,
 )
 
 from analytics import (
@@ -284,6 +285,16 @@ def remove_sale(sale_id: int):
 
     return {
         "message": "Sale deleted successfully"
+    }
+
+@app.get("/sale-vehicles")
+def get_sale_vehicles():
+
+    vehicles = get_sale_eligible_vehicles()
+
+    return {
+        "count": len(vehicles),
+        "vehicles": vehicles
     }
 
 @app.get("/analytics/dashboard")

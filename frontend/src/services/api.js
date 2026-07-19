@@ -31,4 +31,27 @@ export const updateInspection = (id, inspection) =>
 export const deleteInspection = (id) =>
     api.delete(`/inspections/${id}`);
 
+export const getSales = () =>
+    api.get("/sales");
+
+
+export const getSaleById = (id) =>
+    api.get(`/sales/${id}`);
+
+
+export const createSale = (sale) =>
+    api.post("/sales", sale);
+
+
+export const updateSale = (id, sale) =>
+    api.put(`/sales/${id}`, sale);
+
+
+export const deleteSale = (id) =>
+    api.delete(`/sales/${id}`);
+
+
+export const getSaleVehicles = () =>
+    api.get("/sale-vehicles");
+
 export default api;
