@@ -7,11 +7,13 @@ load_dotenv(".env.development")
 
 DB_TYPE = os.getenv("DB_TYPE")
 
+
 def get_placeholder():
     """
     Returns the SQL placeholder based on the database type.
     """
     return "?" if DB_TYPE == "sqlite" else "%s"
+
 
 def get_connection():
     """
@@ -26,8 +28,9 @@ def get_connection():
         port=os.getenv("DB_PORT"),
         user=os.getenv("DB_USER"),
         password=os.getenv("DB_PASSWORD"),
-        database=os.getenv("DB_NAME")
+        database=os.getenv("DB_NAME"),
     )
+
 
 def create_tables():
     """
@@ -128,7 +131,9 @@ def create_tables():
     conn.commit()
     conn.close()
 
+
 # VEHICLE
+
 
 def vehicle_exists(vehicle_id):
     """
@@ -153,6 +158,7 @@ def vehicle_exists(vehicle_id):
     conn.close()
 
     return count > 0
+
 
 def get_vehicle_status(vehicle_id):
     """
@@ -181,6 +187,7 @@ def get_vehicle_status(vehicle_id):
 
     return row[0]
 
+
 def vehicle_to_dict(row):
     return {
         "vehicle_id": row[0],
@@ -193,8 +200,9 @@ def vehicle_to_dict(row):
         "mileage": row[7],
         "purchase_price": row[8],
         "selling_price": row[9],
-        "status": row[10]
+        "status": row[10],
     }
+
 
 def get_all_vehicles():
     """
@@ -216,6 +224,7 @@ def get_all_vehicles():
 
     return vehicles
 
+
 def get_vehicle_by_id(vehicle_id):
     """
     Returns a single vehicle by its ID.
@@ -224,10 +233,13 @@ def get_vehicle_by_id(vehicle_id):
     conn = get_connection()
     cursor = conn.cursor()
 
-    cursor.execute("""
+    cursor.execute(
+        """
         SELECT * FROM vehicles
         WHERE vehicle_id = ?
-    """, (vehicle_id,))
+    """,
+        (vehicle_id,),
+    )
 
     row = cursor.fetchone()
 
@@ -237,6 +249,7 @@ def get_vehicle_by_id(vehicle_id):
         return None
 
     return vehicle_to_dict(row)
+
 
 def add_vehicle(data):
     """
@@ -275,18 +288,21 @@ def add_vehicle(data):
     )
     """
 
-    cursor.execute(query, (
-        data["brand"],
-        data["model"],
-        data["year"],
-        data["fuel_type"],
-        data["transmission"],
-        data["color"],
-        data["mileage"],
-        data["purchase_price"],
-        data["selling_price"],
-        data["status"]
-    ))
+    cursor.execute(
+        query,
+        (
+            data["brand"],
+            data["model"],
+            data["year"],
+            data["fuel_type"],
+            data["transmission"],
+            data["color"],
+            data["mileage"],
+            data["purchase_price"],
+            data["selling_price"],
+            data["status"],
+        ),
+    )
 
     conn.commit()
 
@@ -296,6 +312,7 @@ def add_vehicle(data):
 
     return vehicle_id
 
+
 def update_vehicle(vehicle_id, data):
     """
     Updates an existing vehicle.
@@ -304,7 +321,8 @@ def update_vehicle(vehicle_id, data):
     conn = get_connection()
     cursor = conn.cursor()
 
-    cursor.execute("""
+    cursor.execute(
+        """
         UPDATE vehicles
         SET
             brand = ?,
@@ -318,19 +336,21 @@ def update_vehicle(vehicle_id, data):
             selling_price = ?,
             status = ?
         WHERE vehicle_id = ?
-    """, (
-        data["brand"],
-        data["model"],
-        data["year"],
-        data["fuel_type"],
-        data["transmission"],
-        data["color"],
-        data["mileage"],
-        data["purchase_price"],
-        data["selling_price"],
-        data["status"],
-        vehicle_id
-    ))
+    """,
+        (
+            data["brand"],
+            data["model"],
+            data["year"],
+            data["fuel_type"],
+            data["transmission"],
+            data["color"],
+            data["mileage"],
+            data["purchase_price"],
+            data["selling_price"],
+            data["status"],
+            vehicle_id,
+        ),
+    )
 
     conn.commit()
 
@@ -340,6 +360,7 @@ def update_vehicle(vehicle_id, data):
 
     return updated
 
+
 def delete_vehicle(vehicle_id):
     """
     Deletes a vehicle.
@@ -348,10 +369,13 @@ def delete_vehicle(vehicle_id):
     conn = get_connection()
     cursor = conn.cursor()
 
-    cursor.execute("""
+    cursor.execute(
+        """
         DELETE FROM vehicles
         WHERE vehicle_id = ?
-    """, (vehicle_id,))
+    """,
+        (vehicle_id,),
+    )
 
     conn.commit()
 
@@ -361,7 +385,9 @@ def delete_vehicle(vehicle_id):
 
     return deleted
 
+
 # INSPECTION
+
 
 def add_inspection(data):
     """
@@ -390,13 +416,16 @@ def add_inspection(data):
     )
     """
 
-    cursor.execute(query, (
-        data["vehicle_id"],
-        data["inspection_date"],
-        data["condition"],
-        data["remarks"],
-        data["status"]
-    ))
+    cursor.execute(
+        query,
+        (
+            data["vehicle_id"],
+            data["inspection_date"],
+            data["condition"],
+            data["remarks"],
+            data["status"],
+        ),
+    )
 
     conn.commit()
 
@@ -405,6 +434,7 @@ def add_inspection(data):
     conn.close()
 
     return inspection_id
+
 
 def get_all_inspections():
     """
@@ -437,17 +467,20 @@ def get_all_inspections():
     inspections = []
 
     for row in rows:
-        inspections.append({
-            "inspection_id": row[0],
-            "vehicle_id": row[1],
-            "vehicle_name": row[2],
-            "inspection_date": row[3],
-            "condition": row[4],
-            "remarks": row[5],
-            "status": row[6]
-        })
+        inspections.append(
+            {
+                "inspection_id": row[0],
+                "vehicle_id": row[1],
+                "vehicle_name": row[2],
+                "inspection_date": row[3],
+                "condition": row[4],
+                "remarks": row[5],
+                "status": row[6],
+            }
+        )
 
     return inspections
+
 
 def get_inspection_by_id(inspection_id):
     """
@@ -490,8 +523,9 @@ def get_inspection_by_id(inspection_id):
         "inspection_date": row[3],
         "condition": row[4],
         "remarks": row[5],
-        "status": row[6]
+        "status": row[6],
     }
+
 
 def update_inspection(inspection_id, data):
     """
@@ -514,14 +548,17 @@ def update_inspection(inspection_id, data):
         WHERE inspection_id={placeholder}
     """
 
-    cursor.execute(query, (
-        data["vehicle_id"],
-        data["inspection_date"],
-        data["condition"],
-        data["remarks"],
-        data["status"],
-        inspection_id
-    ))
+    cursor.execute(
+        query,
+        (
+            data["vehicle_id"],
+            data["inspection_date"],
+            data["condition"],
+            data["remarks"],
+            data["status"],
+            inspection_id,
+        ),
+    )
 
     conn.commit()
 
@@ -530,6 +567,7 @@ def update_inspection(inspection_id, data):
     conn.close()
 
     return updated
+
 
 def delete_inspection(inspection_id):
     """
@@ -556,7 +594,9 @@ def delete_inspection(inspection_id):
 
     return deleted
 
+
 # HELPER FUNCTIONS
+
 
 def calculate_profit(vehicle_id, selling_price):
     """
@@ -587,6 +627,7 @@ def calculate_profit(vehicle_id, selling_price):
 
     return selling_price - purchase_price
 
+
 def mark_vehicle_as_sold(vehicle_id):
     """
     Updates vehicle status to Sold.
@@ -603,10 +644,7 @@ def mark_vehicle_as_sold(vehicle_id):
         WHERE vehicle_id = {placeholder}
     """
 
-    cursor.execute(query, (
-        "Sold",
-        vehicle_id
-    ))
+    cursor.execute(query, ("Sold", vehicle_id))
 
     conn.commit()
 
@@ -626,13 +664,11 @@ def mark_vehicle_as_available(vehicle_id):
         WHERE vehicle_id={placeholder}
     """
 
-    cursor.execute(query, (
-        "Available",
-        vehicle_id
-    ))
+    cursor.execute(query, ("Available", vehicle_id))
 
     conn.commit()
     conn.close()
+
 
 def get_sale_eligible_vehicles():
     """
@@ -667,16 +703,20 @@ def get_sale_eligible_vehicles():
 
     for row in rows:
 
-        vehicles.append({
-            "vehicle_id": row[0],
-            "brand": row[1],
-            "model": row[2],
-            "purchase_price": row[3]
-        })
+        vehicles.append(
+            {
+                "vehicle_id": row[0],
+                "brand": row[1],
+                "model": row[2],
+                "purchase_price": row[3],
+            }
+        )
 
     return vehicles
 
+
 # SALES
+
 
 def add_sale(data):
     """
@@ -687,25 +727,16 @@ def add_sale(data):
 
     # Check if vehicle exists
     if not vehicle_exists(vehicle_id):
-        return {
-            "success": False,
-            "message": "Vehicle does not exist."
-        }
+        return {"success": False, "message": "Vehicle does not exist."}
 
     # Check vehicle status
     status = get_vehicle_status(vehicle_id)
 
     if status != "Available":
-        return {
-            "success": False,
-            "message": "Vehicle is not available for sale."
-        }
+        return {"success": False, "message": "Vehicle is not available for sale."}
 
     # Calculate profit
-    profit = calculate_profit(
-        vehicle_id,
-        data["final_price"]
-    )
+    profit = calculate_profit(vehicle_id, data["final_price"])
 
     conn = get_connection()
     cursor = conn.cursor()
@@ -729,13 +760,16 @@ def add_sale(data):
         )
     """
 
-    cursor.execute(query, (
-        vehicle_id,
-        data["buyer_name"],
-        data["sale_date"],
-        data["final_price"],
-        profit
-    ))
+    cursor.execute(
+        query,
+        (
+            vehicle_id,
+            data["buyer_name"],
+            data["sale_date"],
+            data["final_price"],
+            profit,
+        ),
+    )
 
     conn.commit()
 
@@ -746,11 +780,8 @@ def add_sale(data):
     # Update vehicle status
     mark_vehicle_as_sold(vehicle_id)
 
-    return {
-        "success": True,
-        "sale_id": sale_id,
-        "profit": profit
-    }
+    return {"success": True, "sale_id": sale_id, "profit": profit}
+
 
 def get_all_sales():
     """
@@ -783,16 +814,19 @@ def get_all_sales():
     sales = []
 
     for row in rows:
-        sales.append({
-            "sale_id": row[0],
-            "vehicle_id": row[1],
-            "vehicle_name": row[2],
-            "buyer_name": row[3],
-            "sale_date": row[4],
-            "final_price": row[5],
-            "profit": row[6]
-        })
+        sales.append(
+            {
+                "sale_id": row[0],
+                "vehicle_id": row[1],
+                "vehicle_name": row[2],
+                "buyer_name": row[3],
+                "sale_date": row[4],
+                "final_price": row[5],
+                "profit": row[6],
+            }
+        )
     return sales
+
 
 def get_sale_by_id(sale_id):
     """
@@ -833,18 +867,16 @@ def get_sale_by_id(sale_id):
         "buyer_name": row[3],
         "sale_date": row[4],
         "final_price": row[5],
-        "profit": row[6]
+        "profit": row[6],
     }
+
 
 def update_sale(sale_id, data):
     """
     Updates a sale.
     """
 
-    profit = calculate_profit(
-        data["vehicle_id"],
-        data["final_price"]
-    )
+    profit = calculate_profit(data["vehicle_id"], data["final_price"])
 
     conn = get_connection()
     cursor = conn.cursor()
@@ -861,13 +893,10 @@ def update_sale(sale_id, data):
         WHERE sale_id={placeholder}
     """
 
-    cursor.execute(query, (
-        data["buyer_name"],
-        data["sale_date"],
-        data["final_price"],
-        profit,
-        sale_id
-    ))
+    cursor.execute(
+        query,
+        (data["buyer_name"], data["sale_date"], data["final_price"], profit, sale_id),
+    )
 
     conn.commit()
 
@@ -876,6 +905,7 @@ def update_sale(sale_id, data):
     conn.close()
 
     return updated
+
 
 def delete_sale(sale_id):
 

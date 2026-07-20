@@ -1,6 +1,7 @@
 import pandas as pd
 from db import get_connection
 
+
 def load_data():
 
     conn = get_connection()
@@ -13,31 +14,22 @@ def load_data():
 
     return vehicles, inspections, sales
 
+
 def dashboard_summary():
 
     vehicles, inspections, sales = load_data()
 
     summary = {
-
         "total_vehicles": len(vehicles),
-
-        "available_vehicles":
-            len(vehicles[vehicles["status"] == "Available"]),
-
-        "sold_vehicles":
-            len(vehicles[vehicles["status"] == "Sold"]),
-
-        "total_sales":
-            len(sales),
-
-        "total_revenue":
-            float(sales["final_price"].sum()) if not sales.empty else 0,
-
-        "total_profit":
-            float(sales["profit"].sum()) if not sales.empty else 0
+        "available_vehicles": len(vehicles[vehicles["status"] == "Available"]),
+        "sold_vehicles": len(vehicles[vehicles["status"] == "Sold"]),
+        "total_sales": len(sales),
+        "total_revenue": float(sales["final_price"].sum()) if not sales.empty else 0,
+        "total_profit": float(sales["profit"].sum()) if not sales.empty else 0,
     }
 
     return summary
+
 
 def brand_sales():
 
@@ -46,23 +38,20 @@ def brand_sales():
     if vehicles.empty or sales.empty:
         return []
 
-    merged = sales.merge(
-        vehicles,
-        on="vehicle_id"
-    )
+    merged = sales.merge(vehicles, on="vehicle_id")
 
     result = (
-        merged
-        .groupby("brand")
+        merged.groupby("brand")
         .agg(
             vehicles_sold=("sale_id", "count"),
             total_revenue=("final_price", "sum"),
-            total_profit=("profit", "sum")
+            total_profit=("profit", "sum"),
         )
         .reset_index()
     )
 
     return result.to_dict(orient="records")
+
 
 def inventory_summary():
 
@@ -71,13 +60,10 @@ def inventory_summary():
     if vehicles.empty:
         return {}
 
-    inventory = (
-        vehicles["status"]
-        .value_counts()
-        .to_dict()
-    )
+    inventory = vehicles["status"].value_counts().to_dict()
 
     return inventory
+
 
 def inspection_summary():
 
@@ -86,11 +72,8 @@ def inspection_summary():
     if inspections.empty:
         return {}
 
-    return (
-        inspections["status"]
-        .value_counts()
-        .to_dict()
-    )
+    return inspections["status"].value_counts().to_dict()
+
 
 def monthly_sales():
 
@@ -99,9 +82,7 @@ def monthly_sales():
     if sales.empty:
         return []
 
-    sales["sale_date"] = pd.to_datetime(
-        sales["sale_date"]
-    )
+    sales["sale_date"] = pd.to_datetime(sales["sale_date"])
 
     sales["month"] = sales["sale_date"].dt.strftime("%Y-%m")
 
@@ -110,7 +91,7 @@ def monthly_sales():
         .agg(
             sales=("sale_id", "count"),
             revenue=("final_price", "sum"),
-            profit=("profit", "sum")
+            profit=("profit", "sum"),
         )
         .reset_index()
     )

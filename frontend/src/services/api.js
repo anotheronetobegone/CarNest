@@ -34,24 +34,34 @@ export const deleteInspection = (id) =>
 export const getSales = () =>
     api.get("/sales");
 
-
 export const getSaleById = (id) =>
     api.get(`/sales/${id}`);
-
 
 export const createSale = (sale) =>
     api.post("/sales", sale);
 
-
 export const updateSale = (id, sale) =>
     api.put(`/sales/${id}`, sale);
-
 
 export const deleteSale = (id) =>
     api.delete(`/sales/${id}`);
 
-
 export const getSaleVehicles = () =>
     api.get("/sale-vehicles");
+
+export const getAnalyticsDashboard = () =>
+    api.get("/analytics/dashboard");
+
+export const getBrandSales = () =>
+    api.get("/analytics/brand-sales");
+
+export const getInventorySummary = () =>
+    api.get("/analytics/inventory");
+
+export const getInspectionSummary = () =>
+    api.get("/analytics/inspection-summary");
+
+export const getMonthlySales = () =>
+    api.get("/analytics/monthly-sales");
 
 export default api;
