@@ -1,8 +1,12 @@
+"""Analytics helpers for CarNest dashboard and reporting endpoints."""
+
 import pandas as pd
+
 from db import get_connection
 
 
 def load_data():
+    """Load vehicles, inspections, and sales data from the configured database."""
 
     conn = get_connection()
 
@@ -16,8 +20,9 @@ def load_data():
 
 
 def dashboard_summary():
+    """Return the main dashboard metrics for the application."""
 
-    vehicles, inspections, sales = load_data()
+    vehicles, _, sales = load_data()
 
     summary = {
         "total_vehicles": len(vehicles),
@@ -32,8 +37,9 @@ def dashboard_summary():
 
 
 def brand_sales():
+    """Return aggregated sales data grouped by vehicle brand."""
 
-    vehicles, inspections, sales = load_data()
+    vehicles, _, sales = load_data()
 
     if vehicles.empty or sales.empty:
         return []
@@ -54,6 +60,7 @@ def brand_sales():
 
 
 def inventory_summary():
+    """Return a summary of vehicle inventory by status."""
 
     vehicles, _, _ = load_data()
 
@@ -66,6 +73,7 @@ def inventory_summary():
 
 
 def inspection_summary():
+    """Return a summary of inspections by status."""
 
     _, inspections, _ = load_data()
 
@@ -76,6 +84,7 @@ def inspection_summary():
 
 
 def monthly_sales():
+    """Return monthly sales, revenue, and profit grouped by month."""
 
     _, _, sales = load_data()
 

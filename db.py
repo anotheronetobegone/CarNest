@@ -1,5 +1,8 @@
+"""Database access helpers and schema management for the CarNest application."""
+
 import os
 import sqlite3
+
 import mysql.connector
 from dotenv import load_dotenv
 
@@ -189,6 +192,8 @@ def get_vehicle_status(vehicle_id):
 
 
 def vehicle_to_dict(row):
+    """Convert a database row into a vehicle dictionary."""
+
     return {
         "vehicle_id": row[0],
         "brand": row[1],
@@ -652,6 +657,7 @@ def mark_vehicle_as_sold(vehicle_id):
 
 
 def mark_vehicle_as_available(vehicle_id):
+    """Update a vehicle status back to Available."""
 
     conn = get_connection()
     cursor = conn.cursor()
@@ -790,9 +796,8 @@ def get_all_sales():
 
     conn = get_connection()
     cursor = conn.cursor()
-    placeholder = get_placeholder()
 
-    query = f"""
+    query = """
         SELECT
             s.sale_id,
             s.vehicle_id,
@@ -908,6 +913,7 @@ def update_sale(sale_id, data):
 
 
 def delete_sale(sale_id):
+    """Delete a sale and restore the vehicle availability."""
 
     conn = get_connection()
     cursor = conn.cursor()
