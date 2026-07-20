@@ -257,27 +257,28 @@ http://localhost:3000
 # Screenshots
 
 ## Dashboard
+<img width="1920" height="957" alt="image" src="https://github.com/user-attachments/assets/a9e37f06-6a15-4ac5-a069-8777bc6f5b07" />
 
 
 ---
 
 ## Vehicles
-
+<img width="1920" height="957" alt="image" src="https://github.com/user-attachments/assets/a6d51bd4-fc6f-45b5-a659-1c6ee784768a" />
 
 ---
 
 ## Inspections
-
+<img width="1920" height="957" alt="image" src="https://github.com/user-attachments/assets/a19db037-f9b3-4cab-826f-621ffa1284c2" />
 
 ---
 
 ## Sales
-
+<img width="1920" height="957" alt="image" src="https://github.com/user-attachments/assets/79bc3ae2-b0da-4b24-8ecd-ab4ff6a93fac" />
 
 ---
 
 ## Analytics
-
+<img width="1920" height="957" alt="image" src="https://github.com/user-attachments/assets/22a24abc-291a-4420-a616-4cb5da3c4f78" />
 
 ---
 
