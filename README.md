@@ -76,29 +76,23 @@ Business insights generated using **Pandas**:
 
 ```
 CarNest/
-
-│
-├── backend/
-│   ├── main.py
-│   ├── db.py
-│   ├── analytics.py
-│   ├── requirements.txt
-│   └── .env.development
-│
+├── main.py
+├── db.py
+├── analytics.py
+├── requirements.txt
+├── .env.development
+├── test_connection.py
 ├── frontend/
-│   ├── src/
-│   │
-│   ├── components/
-│   │
-│   ├── pages/
-│   │
-│   ├── hooks/
-│   │
-│   ├── services/
-│   │
-│   └── App.js
-│
-└── README.md
+│   ├── package.json
+│   ├── public/
+│   └── src/
+│       ├── components/
+│       ├── pages/
+│       ├── hooks/
+│       ├── services/
+│       └── App.js
+└── tests/
+    └── test_vehicle.py
 ```
 
 ---
@@ -251,6 +245,26 @@ http://localhost:3000
 | GET | /analytics/inventory |
 | GET | /analytics/inspection-summary |
 | GET | /analytics/monthly-sales |
+
+---
+
+# Testing
+
+The project includes automated API tests for vehicle CRUD operations using `pytest` and FastAPI's `TestClient`.
+
+## Run the tests
+
+```bash
+pip install -r requirements.txt pytest
+pytest tests/test_vehicle.py -v
+```
+
+The test suite in [tests/test_vehicle.py](tests/test_vehicle.py) covers:
+- creating a vehicle
+- fetching all vehicles
+- fetching a single vehicle by ID
+- updating an existing vehicle
+- deleting a vehicle
 
 ---
 
